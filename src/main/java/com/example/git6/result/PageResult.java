@@ -1,0 +1,27 @@
+package com.example.git6.result;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 封装分页查询结果
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class PageResult<T> implements Serializable {
+
+    //总记录数
+    @Schema(description = "总记录数")
+    private long total;
+
+    //当前页数据集合
+    @Schema(description = "返回数据列表")
+    private List<T> records;
+
+}
