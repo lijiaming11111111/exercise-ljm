@@ -1,4 +1,4 @@
-package com.example.git6.DTO;
+package com.example.git6.DTO.mail;
 
 import com.example.git6.enums.MailType;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -6,8 +6,6 @@ import lombok.Data;
 
 @Data
 public class PageSelectMailDTO {
-    @Schema(description = "邮件ID")
-    private Long id;
 
     @Schema(description = "发送者邮箱")
     private String sendEmail;

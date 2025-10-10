@@ -1,4 +1,4 @@
-package com.example.git6.DTO;
+package com.example.git6.DTO.mail;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

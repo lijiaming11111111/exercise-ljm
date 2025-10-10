@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.git6.DTO.InsertMailDTO;
-import com.example.git6.DTO.PageSelectMailDTO;
+import com.example.git6.DTO.mail.InsertMailDTO;
+import com.example.git6.DTO.mail.PageSelectMailDTO;
 import com.example.git6.entity.Mail;
 import com.example.git6.mapper.MailMapper;
 import com.example.git6.result.PageResult;
@@ -26,6 +26,7 @@ import static com.example.git6.enums.MailType.SUCCEED;
 @Service
 @RequiredArgsConstructor
 public class MailImpl implements MailService {
+
     @Autowired
     private JavaMailSender mailSender;
 
@@ -34,14 +35,15 @@ public class MailImpl implements MailService {
     @org.springframework.beans.factory.annotation.Value("${spring.mail.username}")
     private String senderMail;
 
-
     @Override
     public String insertMail(InsertMailDTO insertMailDTO) {
+        //创建对象
         Mail mail = new Mail();
         mail.setId(IdWorker.getId());
         mail.setSendEmail(senderMail);
         mail.setSendDate(LocalDateTime.now());
         mail.setContent(insertMailDTO.getContent());
+
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             //发送邮箱
@@ -66,14 +68,20 @@ public class MailImpl implements MailService {
 
     @Override
     public PageResult<Mail> pageSelectMail(PageSelectMailDTO pageSelectMailDTO) {
+        //创建分页对象，指定页码和每页大小
         Page<Mail> page = new Page<>(pageSelectMailDTO.getPage(), pageSelectMailDTO.getPageSize());
+        //创建 Lambda 形式的查询条件构造器
         LambdaQueryWrapper<Mail> queryWrapper = new LambdaQueryWrapper<>();
+        //模糊查询发送者邮箱
         queryWrapper.like(StringUtils.isNotBlank(pageSelectMailDTO.getSendEmail()),
                 Mail::getSendEmail, pageSelectMailDTO.getSendEmail());
+        //模糊查询接收者邮箱
         queryWrapper.like(StringUtils.isNotBlank(pageSelectMailDTO.getRecipientEmail()),
                 Mail::getRecipientEmail, pageSelectMailDTO.getRecipientEmail());
+        //模糊查询邮件内容
         queryWrapper.like(StringUtils.isNotBlank(pageSelectMailDTO.getContent()),
                 Mail::getContent, pageSelectMailDTO.getContent());
+        //查询发送状态
         queryWrapper.eq(pageSelectMailDTO.getStatus()!=null, Mail::getStatus, pageSelectMailDTO.getStatus());
         Page<Mail>result=mailMapper.selectPage(page,queryWrapper);
         return new PageResult<>(result.getTotal(),result.getRecords());
