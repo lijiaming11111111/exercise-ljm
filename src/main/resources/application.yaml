@@ -36,5 +36,22 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
+
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+jwt:
+  secretKey: "pTk5RxoqazNMf2SWBhljDVP8GsC4etnYU9xHA3b0ikL7wQ6yF1mzczXc9Bnv7Gtfd2Sqw4ErtyHjuk5Miop1Lkjh8Nmnb3Vcxz0Asdfg6"
+  expiration: 12 #过期时间 小时
+
+user:  #用户
+  salt: #盐
+    length: 16 #长度
+
 knife4j:
   enable: true
