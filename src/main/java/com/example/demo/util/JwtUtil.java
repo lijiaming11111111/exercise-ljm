@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * @author Refjttria
  *
  * JWT令牌工具
  */
