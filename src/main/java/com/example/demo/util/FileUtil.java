@@ -1,5 +1,8 @@
 package com.example.demo.util;
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.example.demo.entity.File;
+import com.example.demo.mapper.FileMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -17,9 +20,11 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 
+
 import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -34,9 +39,12 @@ public class FileUtil {
 
     private String bucketName;
 
-    public FileUtil(S3Client s3Client, @Value("${tebi.bucket-name}") String bucketName) {
+    private  FileMapper fileMapper;
+
+    public FileUtil(S3Client s3Client, @Value("${tebi.bucket-name}") String bucketName, FileMapper fileMapper) {
         this.s3Client = s3Client;
         this.bucketName = bucketName;
+        this.fileMapper = fileMapper;
     }
 
     /**
@@ -57,7 +65,14 @@ public class FileUtil {
 
         // 执行上传
         s3Client.putObject(request, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-
+        //数据库
+        File sqlFile=new File();
+        sqlFile.setId(IdWorker.getId());
+        sqlFile.setFileName(file.getOriginalFilename());
+        sqlFile.setObjectName(fileName);
+        sqlFile.setBucketName(bucketName);
+        sqlFile.setUploadTime(LocalDateTime.now());
+        fileMapper.insert(sqlFile);
         return fileName;  // 返回文件在 S3 中的 key
     }
 
@@ -112,6 +127,15 @@ public class FileUtil {
             );
 
             URL presignedUrl = presignedPutObjectRequest.url();
+
+            //数据库
+            File sqlFile=new File();
+            sqlFile.setId(IdWorker.getId());
+            sqlFile.setFileName(originalName);
+            sqlFile.setObjectName(uniqueFileName);
+            sqlFile.setBucketName(bucketName);
+            sqlFile.setUploadTime(LocalDateTime.now());
+            fileMapper.insert(sqlFile);
             return String.valueOf(presignedUrl);
 
         } catch (Exception e) {

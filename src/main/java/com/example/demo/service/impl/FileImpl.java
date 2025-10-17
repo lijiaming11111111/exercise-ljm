@@ -1,5 +1,7 @@
 package com.example.demo.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.example.demo.entity.Mail;
 import com.example.demo.service.FileService;
 import com.example.demo.util.FileUtil;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequ
 import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -37,7 +40,7 @@ public class FileImpl implements FileService {
     }
 
     @Override
-    public String url(MultipartFile file) throws IOException {
+    public String url(MultipartFile file) {
         return fileUtil.url(file);
     }
 

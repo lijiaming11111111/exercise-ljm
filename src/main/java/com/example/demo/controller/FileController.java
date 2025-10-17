@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.result.Result;
 import com.example.demo.service.FileService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ public class FileController {
      * 文件上传接口
      */
     @PostMapping("upload")
+    @Operation(summary = "上传文件")
     public Result<String> upload(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return Result.success("请选择要上传的文件");
@@ -48,16 +50,19 @@ public class FileController {
      * 接收文件元信息，生成可用于PUT上传的预签名URL
      * @return 包含预签名URL的响应
      */
-    @PutMapping("/presigned-url")
-    public Result<String> generatePresignedUrl(@RequestParam("file") MultipartFile file) throws IOException {
+    @PutMapping("/uploadUrl")
+    @Operation(summary = "上传的url")
+    public Result<String> uploadUrl(@RequestParam("file") MultipartFile file) throws IOException {
         return Result.success("url生成成功",fileService.url(file));
     }
 
     /**
+     * fileName 下载的文件铭
      * 通过请求参数传入文件名
      */
-    @GetMapping("/url")
-    public Result<String> getUrlByParam(@RequestParam("name") String fileName) {
-        return Result.success(null,fileService.generateDownloadUrl(fileName));
+    @GetMapping("/downloadUrl")
+    @Operation(summary = "下载的url")
+    public Result<String> downloadUrl(@RequestParam("name") String fileName) {
+        return Result.success(fileService.generateDownloadUrl(fileName),null);
     }
 }
