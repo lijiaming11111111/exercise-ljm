@@ -133,6 +133,25 @@
             <version>3.0.0</version>
         </dependency>
 
+        <!-- AWS S3 SDK -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>2.20.0</version>
+        </dependency>
+
+        <!-- 用于处理文件上传 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <!-- 用于处理HTTP请求的依赖 -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>apache-client</artifactId>
+            <version>2.20.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

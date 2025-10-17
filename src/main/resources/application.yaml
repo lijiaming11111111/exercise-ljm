@@ -55,3 +55,9 @@ user:  #用户
 
 knife4j:
   enable: true
+tebi:
+    endpoint: http://s3.tebi.io  # TEBI 提供的 S3 兼容端点
+    access-key: 6m1WAWvm5FIvET8w          # 访问密钥
+    secret-key: RsNYOnDHxwgofi967hiOTbWt23RKZPkwhn6QHlPo          # 密钥
+    bucket-name: ljm.com        # 桶名称
+    region: sgb
