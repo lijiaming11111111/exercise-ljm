@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -84,11 +85,16 @@ public class FileUtil {
                     .key(fileName)
                     .build();
             s3Client.headObject(headRequest);
-
             // 2. 生成预签名 GET 请求（用于下载文件）
+            // 设置响应头，让浏览器下载文件
+            Map<String, String> responseHeaders = new HashMap<>();
+            // attachment 表示附件下载，filename 可指定下载后的文件名
+            responseHeaders.put("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                     .bucket(bucketName)
                     .key(fileName)
+                    .responseContentDisposition("attachment; filename=\"" + fileName + "\"")
                     .build();
 
             PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(
