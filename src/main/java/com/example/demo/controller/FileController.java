@@ -6,19 +6,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Request;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URL;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 @CrossOrigin
 @Slf4j
@@ -37,8 +30,8 @@ public class FileController {
      * @return result
      */
     @PostMapping("/upload")
-    @Operation(summary = "上传文件")
-    public Result<String> upload(@RequestParam("file") MultipartFile file) {
+    @Operation(summary = "手动上传文件")
+    public Result<String> uploadFile(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return Result.success("请选择要上传的文件");
         }
@@ -49,15 +42,27 @@ public class FileController {
             return Result.success("失败原因:" + e.getMessage());
         }
     }
+
     /**
      * fileName 用于生成预签名 URL 的文件名
      * @param file 相关文件
      * @return result
      */
     @PutMapping("/uploadUrl")
-    @Operation(summary = "上传的url")
-    public Result<String> uploadUrl(@RequestParam("file") MultipartFile file) throws IOException {
+    @Operation(summary = "生成url")
+    public Result<URL> uploadUrl(@RequestParam("file") MultipartFile file) throws IOException {
         return Result.success("url生成成功",fileService.url(file));
+    }
+
+    /**
+     * fileName 用于生成预签名 URL 的文件名
+     * @param file 相关文件
+     * @return result
+     */
+    @PutMapping("/uploadUrlFile")
+    @Operation(summary = "上传url文件")
+    public Result<String> uploadUrlFile(String url,@RequestParam("file") MultipartFile file) throws IOException {
+        return Result.success(fileService.uploadFileUrl(url,file));
     }
 
     /**

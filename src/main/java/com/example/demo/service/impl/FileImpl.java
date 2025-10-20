@@ -54,8 +54,13 @@ public class FileImpl implements FileService {
      */
 
     @Override
-    public String url(MultipartFile file) {
+    public URL url(MultipartFile file) {
         return fileUtil.url(file);
+    }
+
+    @Override
+    public String uploadFileUrl(String url, MultipartFile file) throws IOException {
+        return fileUtil.uploadFileUrl(url,file);
     }
 
     /**

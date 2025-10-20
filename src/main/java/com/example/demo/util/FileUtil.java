@@ -9,9 +9,9 @@ import com.example.demo.result.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -25,6 +25,8 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequ
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -44,10 +46,13 @@ public class FileUtil {
 
     private  FileMapper fileMapper;
 
-    public FileUtil(S3Client s3Client, @Value("${tebi.bucket-name}") String bucketName, FileMapper fileMapper) {
+    private final RestTemplate restTemplate;
+
+    public FileUtil(S3Client s3Client, @Value("${tebi.bucket-name}") String bucketName, FileMapper fileMapper, RestTemplate restTemplate) {
         this.s3Client = s3Client;
         this.bucketName = bucketName;
         this.fileMapper = fileMapper;
+        this.restTemplate = restTemplate;
     }
 
     /**
@@ -124,7 +129,7 @@ public class FileUtil {
      * @param file 相关文件
      * @return 预签名URL
      */
-    public String url(MultipartFile file)  {
+    public URL url(MultipartFile file)  {
         try {
             //获取原始文件名
             String originalName = file.getOriginalFilename();
@@ -148,22 +153,12 @@ public class FileUtil {
             );
 
             URL presignedUrl = presignedPutObjectRequest.url();
-
-            //数据库
-            File sqlFile=new File();
-            sqlFile.setId(IdWorker.getId());
-            sqlFile.setFileName(originalName);
-            sqlFile.setObjectName(uniqueFileName);
-            sqlFile.setBucketName(bucketName);
-            sqlFile.setUploadTime(LocalDateTime.now());
-            fileMapper.insert(sqlFile);
-            return String.valueOf(presignedUrl);
-
+            return presignedUrl;
         } catch (Exception e) {
             Map<String, Object> error = new HashMap<>();
             error.put("success", false);
             error.put("message", "生成URL失败：" + e.getMessage());
-            return String.valueOf(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error));
+            return null;
         }
     }
 
@@ -187,6 +182,62 @@ public class FileUtil {
             return "删除成功";
         }catch (S3Exception e) {
             return "删除失败";
+        }
+    }
+    /**
+     * 通过预签名 URL 上传文件
+     * @param url 已生成的预签名 URL
+     * @param file 要上传的文件
+     * @return 上传结果（成功/失败信息）
+     */
+    public String uploadFileUrl(String url, MultipartFile file) {
+        try {
+
+            // 1. 检查文件是否为空
+            if (file.isEmpty()) {
+                return "上传失败：文件为空";
+            }
+            String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8.name());
+            // 2. 设置请求头（根据 S3 协议，需指定文件 Content-Type）
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(file.getContentType()));
+            headers.setContentLength(file.getSize());
+
+            // 3. 构建请求体（文件字节流）
+            HttpEntity<byte[]> requestEntity = new HttpEntity<>(file.getBytes(), headers);
+
+            // 4. 发送 PUT 请求到预签名 URL
+            ResponseEntity<Void> response = restTemplate.exchange(
+                    decodedUrl,
+                    HttpMethod.PUT,
+                    requestEntity,
+                    Void.class
+            );
+            String originalName = file.getOriginalFilename();
+            String fileExt = originalName.contains(".")
+                    ? originalName.substring(originalName.lastIndexOf("."))
+                    : "";
+            //文件唯一ID
+            String uniqueFileName =  UUID.randomUUID() + fileExt;
+            //数据库
+            File sqlFile=new File();
+            sqlFile.setId(IdWorker.getId());
+            sqlFile.setFileName(originalName);
+            sqlFile.setObjectName(uniqueFileName);
+            sqlFile.setBucketName(bucketName);
+            sqlFile.setUploadTime(LocalDateTime.now());
+            fileMapper.insert(sqlFile);
+            // 5. 检查响应状态（200/204 表示成功）
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return "文件上传成功";
+            } else {
+                return "文件上传失败，状态码：" + response.getStatusCodeValue();
+            }
+
+        } catch (IOException e) {
+            return "文件读取失败：" + e.getMessage();
+        } catch (Exception e) {
+            return "上传请求失败：" + e.getMessage();
         }
     }
 }

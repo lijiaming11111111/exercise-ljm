@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Map;
 
 public interface FileService {
@@ -23,7 +24,16 @@ public interface FileService {
      * @return 预签名URL
      * @throws IOException 处理URL生成时可能抛出的IO异常
      */
-    String url(MultipartFile file) throws IOException;
+    URL url(MultipartFile file) throws IOException;
+
+    /**
+     * 生成文件可用于PUT上传的预签名URL
+     *
+     * @param file 相关文件
+     * @return 预签名URL
+     * @throws IOException 处理URL生成时可能抛出的IO异常
+     */
+    String uploadFileUrl(String url, MultipartFile file) throws IOException;
 
     /**
      * 生成文件下载的URL
