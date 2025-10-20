@@ -6,6 +6,7 @@ import com.example.demo.entity.File;
 import com.example.demo.entity.Mail;
 import com.example.demo.mapper.FileMapper;
 import com.example.demo.result.Result;
+import com.example.demo.vo.file.FileUrlVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -129,7 +130,7 @@ public class FileUtil {
      * @param file 相关文件
      * @return 预签名URL
      */
-    public URL url(MultipartFile file)  {
+    public FileUrlVO url(MultipartFile file)  {
         try {
             //获取原始文件名
             String originalName = file.getOriginalFilename();
@@ -153,7 +154,19 @@ public class FileUtil {
             );
 
             URL presignedUrl = presignedPutObjectRequest.url();
-            return presignedUrl;
+            //数据库
+            File sqlFile=new File();
+            sqlFile.setId(IdWorker.getId());
+            sqlFile.setFileName(originalName);
+            sqlFile.setObjectName(uniqueFileName);
+            sqlFile.setBucketName(bucketName);
+            sqlFile.setUploadTime(LocalDateTime.now());
+            fileMapper.insert(sqlFile);
+            fileMapper.selectById(sqlFile.getId());
+            FileUrlVO fileUrlVO = new FileUrlVO();
+            fileUrlVO.setUrl(presignedUrl);
+            fileUrlVO.setId(sqlFile.getId());
+            return fileUrlVO;
         } catch (Exception e) {
             Map<String, Object> error = new HashMap<>();
             error.put("success", false);
@@ -213,20 +226,7 @@ public class FileUtil {
                     requestEntity,
                     Void.class
             );
-            String originalName = file.getOriginalFilename();
-            String fileExt = originalName.contains(".")
-                    ? originalName.substring(originalName.lastIndexOf("."))
-                    : "";
-            //文件唯一ID
-            String uniqueFileName =  UUID.randomUUID() + fileExt;
-            //数据库
-            File sqlFile=new File();
-            sqlFile.setId(IdWorker.getId());
-            sqlFile.setFileName(originalName);
-            sqlFile.setObjectName(uniqueFileName);
-            sqlFile.setBucketName(bucketName);
-            sqlFile.setUploadTime(LocalDateTime.now());
-            fileMapper.insert(sqlFile);
+
             // 5. 检查响应状态（200/204 表示成功）
             if (response.getStatusCode().is2xxSuccessful()) {
                 return "文件上传成功";

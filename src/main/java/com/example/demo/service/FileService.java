@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.vo.file.FileUrlVO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,7 +25,7 @@ public interface FileService {
      * @return 预签名URL
      * @throws IOException 处理URL生成时可能抛出的IO异常
      */
-    URL url(MultipartFile file) throws IOException;
+    FileUrlVO url(MultipartFile file) throws IOException;
 
     /**
      * 生成文件可用于PUT上传的预签名URL

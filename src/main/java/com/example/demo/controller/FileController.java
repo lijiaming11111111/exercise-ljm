@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.result.Result;
 import com.example.demo.service.FileService;
+import com.example.demo.vo.file.FileUrlVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -50,12 +51,13 @@ public class FileController {
      */
     @PutMapping("/uploadUrl")
     @Operation(summary = "生成url")
-    public Result<URL> uploadUrl(@RequestParam("file") MultipartFile file) throws IOException {
+    public Result<FileUrlVO> uploadUrl(@RequestParam("file") MultipartFile file) throws IOException {
         return Result.success("url生成成功",fileService.url(file));
     }
 
     /**
      * fileName 用于生成预签名 URL 的文件名
+     * @param url 预签名url
      * @param file 相关文件
      * @return result
      */

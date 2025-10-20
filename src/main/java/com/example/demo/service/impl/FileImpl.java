@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.example.demo.entity.Mail;
 import com.example.demo.service.FileService;
 import com.example.demo.util.FileUtil;
+import com.example.demo.vo.file.FileUrlVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,7 +55,7 @@ public class FileImpl implements FileService {
      */
 
     @Override
-    public URL url(MultipartFile file) {
+    public FileUrlVO url(MultipartFile file) {
         return fileUtil.url(file);
     }
 
