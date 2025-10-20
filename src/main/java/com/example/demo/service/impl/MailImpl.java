@@ -35,6 +35,12 @@ public class MailImpl implements MailService {
     @org.springframework.beans.factory.annotation.Value("${spring.mail.username}")
     private String senderMail;
 
+    /**
+     * 新增邮件并发送
+     *
+     * @param insertMailDTO 包含新增邮件信息的数据传输对象
+     * @return 邮件发送结果提示
+     */
     @Override
     public String insertMail(InsertMailDTO insertMailDTO) {
         //创建对象
@@ -63,9 +69,14 @@ public class MailImpl implements MailService {
             mailMapper.insert(mail);
             return "邮件发送失败";
         }
-
     }
 
+    /**
+     * 分页查询邮件
+     *
+     * @param pageSelectMailDTO 包含分页查询邮件条件的数据传输对象
+     * @return 分页查询到的邮件结果
+     */
     @Override
     public PageResult<Mail> pageSelectMail(PageSelectMailDTO pageSelectMailDTO) {
         //创建分页对象，指定页码和每页大小
@@ -87,6 +98,12 @@ public class MailImpl implements MailService {
         return new PageResult<>(result.getTotal(),result.getRecords());
     }
 
+    /**
+     * 批量删除邮件
+     *
+     * @param ids 要删除的邮件标识列表
+     * @return 批量删除邮件操作结果
+     */
     @Override
     public Result deleteMail(List<Long> ids) {
         List<Mail> mail=mailMapper.selectBatchIds(ids);

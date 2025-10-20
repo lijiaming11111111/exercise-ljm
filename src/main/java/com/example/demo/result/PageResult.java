@@ -16,11 +16,9 @@ import java.util.List;
 @NoArgsConstructor
 public class PageResult<T> implements Serializable {
 
-    //总记录数
     @Schema(description = "总记录数")
     private long total;
 
-    //当前页数据集合
     @Schema(description = "返回数据列表")
     private List<T> records;
 

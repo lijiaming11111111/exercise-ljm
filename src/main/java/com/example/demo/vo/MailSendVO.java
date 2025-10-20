@@ -9,7 +9,6 @@ import java.util.Date;
 @Data
 public class MailSendVO {
 
-
     @Schema(description = "发送者邮箱")
     private String sendEmail;
 

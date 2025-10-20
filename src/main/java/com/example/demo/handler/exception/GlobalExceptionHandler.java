@@ -32,7 +32,6 @@ import java.util.List;
 @Hidden
 public class GlobalExceptionHandler {
 
-
     /**
      * 处理参数验证异常
      * @param e
@@ -52,5 +51,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(result, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-
+    /**
+     * 处理基础异常
+     *
+     * @param e 基础异常
+     * @return 封装了异常信息的响应实体
+     */
+    @ExceptionHandler(BaseException.class)
+    @ResponseBody
+    public ResponseEntity<Result<String>> handleBaseException(BaseException e) {
+        // 用Result封装异常信息
+        Result<String> result = Result.error(e.getMessage());
+        // 根据业务需求设置 HTTP 状态码
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
 }

@@ -58,7 +58,6 @@ public class FileUtil {
     public String uploadFile(MultipartFile file) throws IOException {
         // 生成唯一的文件名，避免重复
         String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
-
         // 构建上传请求
         PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(bucketName)
@@ -79,16 +78,21 @@ public class FileUtil {
         return fileName;  // 返回文件在 S3 中的 key
     }
 
+    /**
+     * 生成文件下载的URL
+     *
+     * @param fileName 要下载的文件名
+     * @return 下载URL
+     */
     public String generateDownloadUrl(String fileName) {
         try {
-            // 1. 检查文件是否存在（HEAD 请求，轻量高效）
+            // 检查文件是否存在
             HeadObjectRequest headRequest = HeadObjectRequest.builder()
                     .bucket(bucketName)
                     .key(fileName)
                     .build();
             s3Client.headObject(headRequest);
-            // 2. 生成预签名 GET 请求（用于下载文件）
-            // 设置响应头，让浏览器下载文件
+            // 生成预签名 GET 请求
             Map<String, String> responseHeaders = new HashMap<>();
             // attachment 表示附件下载，filename 可指定下载后的文件名
             responseHeaders.put("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
@@ -105,7 +109,7 @@ public class FileUtil {
                             .signatureDuration(Duration.ofDays(1)) // 设置 URL 有效期
             );
 
-            // 3. 获取预签名 URL 并返回
+            // 获取预签名 URL 并返回
             URL presignedUrl = presignedRequest.url();
             return "url成功生成为:"+presignedUrl.toString();
         } catch (SdkException e) {
@@ -114,21 +118,30 @@ public class FileUtil {
         }
     }
 
-
+    /**
+     * 生成文件可用于PUT上传的预签名URL
+     *
+     * @param file 相关文件
+     * @return 预签名URL
+     */
     public String url(MultipartFile file)  {
         try {
+            //获取原始文件名
             String originalName = file.getOriginalFilename();
+            //获取文件扩展名
             String fileExt = originalName.contains(".")
                     ? originalName.substring(originalName.lastIndexOf("."))
                     : "";
+            //文件唯一ID
             String uniqueFileName =  UUID.randomUUID() + fileExt;
 
+            //指定存储桶
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(uniqueFileName)
                     .contentType(file.getContentType())
                     .build();
-
+            //生成url
             PresignedPutObjectRequest presignedPutObjectRequest = s3Presigner.presignPutObject(
                     (builder) -> builder.putObjectRequest(putObjectRequest)
                             .signatureDuration(Duration.ofMinutes(30))
@@ -154,6 +167,13 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 删除文件
+     *
+     * @param file 要删除的文件标识
+     * @return 删除结果相关信息
+     * @throws IOException 处理文件删除时可能抛出的IO异常
+     */
     public String deleteFile(String file) throws IOException {
         try {
             DeleteObjectRequest deleteObjectRequest= DeleteObjectRequest.builder()

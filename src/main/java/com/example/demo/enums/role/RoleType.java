@@ -1,4 +1,4 @@
-package com.example.demo.enums;
+package com.example.demo.enums.role;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -8,21 +8,22 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-@Schema(description = "发送状态(1成功;2失败)")
-public enum MailType {
+@Schema(description = "角色类型（1.系统预设；2.自定义）")
+public enum RoleType {
     /**
-     * 发送状态-成功
+     * 角色类型-系统预设
      */
-    SUCCEED(1, "成功"),
-
+    SYSTEM(1, "系统预设"),
     /**
-     * 发送状态-失败
+     * 角色类型-自定义
      */
-    FAIL(2, "失败");
+    CUSTOM(2, "自定义");
 
     @JsonValue
     @EnumValue
     private final Integer code;
 
     private final String desc;
+
+
 }

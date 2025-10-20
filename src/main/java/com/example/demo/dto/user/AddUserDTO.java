@@ -34,5 +34,4 @@ public class AddUserDTO {
     @Schema(description = "出生年月",required = true)
     private Date birthday;
 
-
 }

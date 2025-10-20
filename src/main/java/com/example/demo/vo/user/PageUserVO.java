@@ -1,24 +1,24 @@
-package com.example.demo.entity;
+package com.example.demo.vo.user;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+
 import com.example.demo.enums.SexEnum;
 import com.example.demo.enums.StatusEnum;
+import com.example.demo.vo.file.FileDataVO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.util.Date;
 
 @Data
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("user")
-public class User {
+@Builder
+public class PageUserVO {
     @TableId(value = "id", type = IdType.AUTO)
     @Schema(description = "邮件id")
     private Long id;
@@ -35,7 +35,6 @@ public class User {
     @Schema(description = "邮箱")
     private String mail;
 
-    @Schema(description = "头像文件ID")
     private Long face;
 
     @Schema(description = "手机号")
@@ -52,5 +51,8 @@ public class User {
 
     @Schema(description = "账号状态枚举")
     private StatusEnum statusEnum;
+
+    @Schema(description = "头像文件ID")
+    private FileDataVO faceUrl;
 
 }

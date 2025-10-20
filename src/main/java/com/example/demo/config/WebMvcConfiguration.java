@@ -15,7 +15,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 @RequiredArgsConstructor
 public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
-
     private final JwtTokenInterceptor jwtTokenInterceptor;
 
     @Override

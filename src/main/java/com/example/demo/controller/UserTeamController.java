@@ -25,6 +25,12 @@ public class UserTeamController {
 
     private final UserTeamService userTeamService;
 
+    /**
+     * 批量新增团队成员
+     *
+     * @param insertUserTeamDTO 包含批量新增团队成员信息的数据传输对象
+     * @return 批量新增团队成员操作结果
+     */
     @PostMapping("/addUserTeam")
     @Operation(summary = "批量新增团队成员")
     public Result<String> addUserTeam(@RequestBody InsertUserTeamDTO insertUserTeamDTO) {
@@ -32,12 +38,24 @@ public class UserTeamController {
         return Result.success(userTeam,null);
     }
 
+    /**
+     * 批量删除团队成员
+     *
+     * @param deleteUserTeamDTO 包含要删除团队成员标识列表的数据传输对象
+     * @return 批量删除团队成员操作结果
+     */
     @PostMapping("/deleteUserTeam")
     @Operation(summary = "批量删除团队成员")
     public Result deleteUserTeam(@RequestBody DeleteUserTeamDTO deleteUserTeamDTO) {
         return userTeamService.deleteUserTeam(deleteUserTeamDTO.getIds());
     }
 
+    /**
+     * 分页查询团队成员
+     *
+     * @param pageSelectUserTeamDTO 包含分页查询团队成员条件的数据传输对象
+     * @return 分页查询到的团队成员结果
+     */
     @PostMapping("/pageSelectUserTeam")
     @Operation(summary = "分页查询团队成员")
     public Result<PageResult<UserTeam>> pageSelectUserTeam(@RequestBody PageSelectUserTeamDTO pageSelectUserTeamDTO) {

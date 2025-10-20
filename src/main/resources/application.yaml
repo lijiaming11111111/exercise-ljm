@@ -14,18 +14,18 @@ spring:
           starttls:
             enable: true
             required: true
-#  datasource:
-#      type: com.alibaba.druid.pool.DruidDataSource
-#      url: jdbc:mysql://o-kr-amd2.017711.xyz:3306?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
-#      username: yym
-#      password: "7s2JchCpQCnWGn6N"
-#      driver-class-name: com.mysql.cj.jdbc.Driver
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://o-kr-amd2.017711.xyz:3306/exercise-ljm?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
     username: ljm
     password: "PBH3D233n2kCTKNb"
     driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: o-kr-amd2.017711.xyz
+      port: 16379
+      database: 2
+      password: "HhFi23U6gsI4hjTeosKC2x31sOPMIe6i"
 
 
 # MyBatis-Plus??
