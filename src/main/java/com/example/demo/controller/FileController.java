@@ -44,7 +44,7 @@ public class FileController {
             String fileKey = fileService.uploadFile(file);
             return Result.success("文件上传成功:" + fileKey);
         } catch (Exception e) {
-            return Result.success("文件上传失败");
+            return Result.success("失败原因:" + e.getMessage());
         }
     }/**
      * 接收文件元信息，生成可用于PUT上传的预签名URL
@@ -64,5 +64,15 @@ public class FileController {
     @Operation(summary = "下载的url")
     public Result<String> downloadUrl(@RequestParam("name") String fileName) {
         return Result.success(fileService.generateDownloadUrl(fileName),null);
+    }
+
+    /**
+     * fileName 删除的文件铭
+     * 通过请求参数传入文件名
+     */
+    @GetMapping("/deleteFile")
+    @Operation(summary = "删除文件")
+    public Result<String> deleteFile(@RequestParam("file") String file) throws IOException {
+        return Result.success(fileService.deleteFile(file),null);
     }
 }

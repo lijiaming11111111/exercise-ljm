@@ -12,4 +12,7 @@ public interface FileService {
     String url(MultipartFile file) throws IOException;
 
     String generateDownloadUrl(String fileName);
+
+    String deleteFile(String file)throws IOException;
+
 }

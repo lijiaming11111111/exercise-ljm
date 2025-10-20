@@ -1,8 +1,11 @@
 package com.example.demo.util;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.example.demo.entity.File;
+import com.example.demo.entity.Mail;
 import com.example.demo.mapper.FileMapper;
+import com.example.demo.result.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,9 +17,7 @@ import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
@@ -27,6 +28,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -149,6 +151,22 @@ public class FileUtil {
             error.put("success", false);
             error.put("message", "生成URL失败：" + e.getMessage());
             return String.valueOf(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error));
+        }
+    }
+
+    public String deleteFile(String file) throws IOException {
+        try {
+            DeleteObjectRequest deleteObjectRequest= DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(file)
+                    .build();
+            s3Client.deleteObject(deleteObjectRequest);
+            QueryWrapper<File> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("object_name", file); // 字段名需与数据库一致
+            fileMapper.delete(queryWrapper);
+            return "删除成功";
+        }catch (S3Exception e) {
+            return "删除失败";
         }
     }
 }

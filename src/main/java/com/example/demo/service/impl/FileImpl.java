@@ -48,4 +48,9 @@ public class FileImpl implements FileService {
     public String generateDownloadUrl(String fileName) {
         return fileUtil.generateDownloadUrl(fileName);
     }
+
+    @Override
+    public String deleteFile(String file)throws IOException{
+        return fileUtil.deleteFile(file);
+    }
 }
