@@ -26,7 +26,7 @@ import java.util.UUID;
 @Tag(name = "文件接口")
 @Validated
 @RestController
-@RequestMapping("/api/upload")
+@RequestMapping("/file")
 public class FileController {
 
     private final FileService fileService;
@@ -36,7 +36,7 @@ public class FileController {
      * @param file 上传的文件
      * @return result
      */
-    @PostMapping("upload")
+    @PostMapping("/upload")
     @Operation(summary = "上传文件")
     public Result<String> upload(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
