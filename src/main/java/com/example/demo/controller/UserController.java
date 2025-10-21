@@ -35,15 +35,13 @@ public class UserController {
      * 新增用户
      *
      * @param dto  包含新增用户信息的数据传输对象
-     * @param face 用户头像文件（可选）
      * @return 新增用户操作结果
      * @throws IOException 处理文件时可能抛出的IO异常
      */
     @PostMapping("/addUser")
     @Operation(summary = "新增用户")
-    public Result<String>addUser(@Valid @RequestPart("dto") AddUserDTO dto,
-                                 @RequestPart(value = "face", required = false) MultipartFile face) throws IOException {
-        return Result.success("新增成功",userService.addUser(dto,face));
+    public Result<String>addUser(@Valid @RequestBody AddUserDTO dto) throws IOException {
+        return Result.success("新增成功",userService.addUser(dto));
     }
 
     /**

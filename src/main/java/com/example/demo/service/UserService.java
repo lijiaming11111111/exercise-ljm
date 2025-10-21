@@ -21,7 +21,7 @@ public interface UserService extends IService<User> {
      * @param  addUserDTO
      * @return
      */
-    String addUser(AddUserDTO addUserDTO, MultipartFile face) throws IOException;
+    String addUser(AddUserDTO addUserDTO) throws IOException;
 
     /**
      * 批量删除用户
@@ -63,7 +63,7 @@ public interface UserService extends IService<User> {
     Result updatePassword(UpdatePasswordDTO dto);
 
     /**
-     * 分页查询邮件历史记录
+     * 分页查询邮件历史记录87
      *
      * @param dto
      * @return

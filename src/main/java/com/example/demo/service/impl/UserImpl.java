@@ -23,6 +23,7 @@ import com.example.demo.util.FileUtil;
 import com.example.demo.util.JwtUtil;
 import com.example.demo.util.SaltUtil;
 import com.example.demo.vo.file.FileDataVO;
+import com.example.demo.vo.file.FileUrlVO;
 import com.example.demo.vo.user.PageUserVO;
 import com.example.demo.vo.user.UserLoginVO;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -80,8 +81,7 @@ public class UserImpl extends ServiceImpl<UserMapper, User>implements UserServic
      * @return
      */
     @Override
-    public String addUser(AddUserDTO addUserDTO, MultipartFile face) throws IOException {
-
+    public String addUser(AddUserDTO addUserDTO){
         //创建用户
         User user = new User();
         BeanUtils.copyProperties(addUserDTO,user);
@@ -101,10 +101,12 @@ public class UserImpl extends ServiceImpl<UserMapper, User>implements UserServic
         if (mobileCount!=0){
             throw new BaseException("手机号已存在");
         }
-
-        String objectName=fileUtil.uploadFile(face);
-        user.setFace(fileMapper.selectFileId(objectName));
-
+        List<Long>faceIdList=fileMapper.selectAllFileId();
+        if (faceIdList.contains(addUserDTO.getFace())){
+            user.setFace(addUserDTO.getFace());
+        }else {
+            throw new BaseException("头像不存在");
+        }
         //生成盐值和加密密码
         String salt= SaltUtil.generateSalt(16);
         user.setSalt(salt);
@@ -155,7 +157,6 @@ public class UserImpl extends ServiceImpl<UserMapper, User>implements UserServic
         password=DigestUtils.md5DigestAsHex(password.getBytes());
         // 验证加密后的密码与数据库中存储的密码是否一致
         if (!password.equals(user.getPassword())) {
-            //密码错误
             throw new BaseException("密码错误");
         }
         // 创建JWT声明（claims）对象，用于存储自定义负载信息
@@ -191,7 +192,7 @@ public class UserImpl extends ServiceImpl<UserMapper, User>implements UserServic
         SimpleMailMessage message = new SimpleMailMessage();
         // 生成随机验证码
         String code = CodeUtil.generateCode(6);
-        // 构建邮件内容，包含验证码信息和提示
+        // 构建邮件内容
         String text = "您的验证码为：" + code + ",请勿泄露给他人。";
         // 设置邮件发送者（发件人邮箱
         message.setFrom(sendMailer);
@@ -207,7 +208,7 @@ public class UserImpl extends ServiceImpl<UserMapper, User>implements UserServic
         mail=dto.getMail();
         try {
             javaMailSender.send(message);
-            redisTemplate.opsForValue().set(RedisCode.CODE.getPrefix() + mail, String.valueOf(code), Duration.ofMinutes(5));
+            redisTemplate.opsForValue().set(RedisCode.CODE.getPrefix() + mail, code, Duration.ofMinutes(5));
             return Result.success("发送成功",null);
 
         }catch (Exception e){

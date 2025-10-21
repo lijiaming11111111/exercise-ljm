@@ -20,7 +20,7 @@ public class S3Config {
 
     String secretKey="RsNYOnDHxwgofi967hi0TbWt23RKZPkwhn6QHlPo";
 
-    String  region="sgb";
+    String region="sgb";
 
     @Bean
     public S3Client s3Client() {

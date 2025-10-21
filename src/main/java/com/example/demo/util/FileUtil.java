@@ -43,9 +43,9 @@ public class FileUtil {
     @Autowired
     private S3Presigner s3Presigner;
 
-    private String bucketName;
+    private final String bucketName;
 
-    private  FileMapper fileMapper;
+    private final FileMapper fileMapper;
 
     private final RestTemplate restTemplate;
 
@@ -205,12 +205,11 @@ public class FileUtil {
      */
     public String uploadFileUrl(String url, MultipartFile file) {
         try {
-
             // 1. 检查文件是否为空
             if (file.isEmpty()) {
                 return "上传失败：文件为空";
             }
-            String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8.name());
+            String decodedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
             // 2. 设置请求头（根据 S3 协议，需指定文件 Content-Type）
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType(file.getContentType()));

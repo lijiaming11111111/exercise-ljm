@@ -4,6 +4,7 @@ package com.example.demo.dto.user;
 import com.example.demo.enums.SexEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -20,6 +21,10 @@ public class AddUserDTO {
 
     @Schema(description = "邮箱",required = true)
     private String mail;
+
+    @Schema(description = "头像文件(id)")
+    @NotNull(message = "头像文件(id)不能为空")
+    private Long face;
 
     @Schema(description = "手机号",required = true)
     @Size(max = 11, message = "联系电话长度超过限制")
