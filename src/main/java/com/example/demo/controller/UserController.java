@@ -154,4 +154,10 @@ public class UserController {
     public Result updateUser(){
         return null;
     }
+
+    @PostMapping("/updateTeam")
+    @Operation(summary = "测试")
+    public Result updateTeam(){
+        return null;
+    }
 }
