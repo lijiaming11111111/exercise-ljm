@@ -148,4 +148,10 @@ public class UserController {
                              @RequestPart(value = "face", required = false) MultipartFile face) throws IOException {
         return userService.updateUser(updateUserDTO,face );
     }
+
+    @PostMapping("/updateUser")
+    @Operation(summary = "测试")
+    public Result updateUser(){
+        return null;
+    }
 }
